@@ -16,10 +16,20 @@ export const fetchNFT = async (req, res) => {
             }
         });
 
-        return res.json({ success: true, nfts: response.data.nfts });
+        const nfts = response.data.nfts.map(nft => ({
+            id: nft.id?.tokenId, // ✅ Ensure each NFT has a unique ID
+            metadata: nft.metadata,
+            dateMinted: new Date(nft.timeLastUpdated).toLocaleDateString("en-GB", {
+                day: "2-digit",
+                month: "short",
+                year: "numeric"
+            })
+        }));
 
+        return res.json({ success: true, nfts });
     } catch (error) {
         console.error("Error fetching NFTs:", error);
         return res.status(500).json({ success: false, message: "Failed to fetch NFTs" });
     }
 };
+

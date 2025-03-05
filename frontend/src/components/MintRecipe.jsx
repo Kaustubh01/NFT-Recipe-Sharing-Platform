@@ -4,31 +4,55 @@ import abi from '../abi.json';
 import { pinata } from '../utils/config';
 
 function MintRecipe() {
-    const CONTRACT_ADDRESS = '0xa09F60B2B42369b1d4d952D31B08386A3B1E413A';
+    const CONTRACT_ADDRESS = '0xeDF89bD8674026E5b696C1E1843C262b16DAaCA0';
     const POLYGON_AMOY_CHAIN_ID = '0x13882';
-    const MINT_PRICE = ethers.parseEther("0.01");
+    const MINT_PRICE = ethers.parseEther("0.001");
     
+    const [title, setTitle] = useState('');
+    const [description, setDescription] = useState('');
+    const [ingredients, setIngredients] = useState(['']);
+    const [steps, setSteps] = useState(['']);
     const [selectedFiles, setSelectedFiles] = useState(null);
     const [isMinting, setIsMinting] = useState(false);
     const [status, setStatus] = useState('');
 
-    const changeHandler = (event) => {
-        setSelectedFiles(event.target.files);
+    const handleChange = setter => event => setter(event.target.value);
+    
+    const handleArrayChange = (index, setter, array) => event => {
+        const newArray = [...array];
+        newArray[index] = event.target.value;
+        setter(newArray);
     };
+    
+    const addField = (setter, array) => () => setter([...array, '']);
+    
+    const changeHandler = event => setSelectedFiles(event.target.files);
 
     const uploadToPinata = async () => {
         if (!selectedFiles || selectedFiles.length === 0) {
             alert('Please select a file before minting.');
             return null;
         }
-        
         try {
-            setStatus('Uploading file to Pinata...');
-            const upload = await pinata.upload.fileArray(selectedFiles);
-            console.log('Uploaded to Pinata:', upload);
-            return upload;
+            setStatus('Uploading image to Pinata...');
+            const uploadImage = await pinata.upload.fileArray(selectedFiles);
+            if (!uploadImage?.IpfsHash) return null;
+            const imageUrl = `ipfs://${uploadImage.IpfsHash}`;
+
+            const metadata = {
+                name: title,
+                description,
+                image: imageUrl,
+                attributes: [
+                    { trait_type: "Ingredients", value: ingredients.join(", ") },
+                    { trait_type: "Steps", value: steps.join(" | ") }
+                ]
+            };
+            
+            setStatus('Uploading metadata to Pinata...');
+            const metadataResponse = await pinata.upload.json(metadata);
+            return metadataResponse?.IpfsHash ? `ipfs://${metadataResponse.IpfsHash}` : null;
         } catch (error) {
-            console.error('Error uploading to Pinata:', error);
             alert('File upload failed');
             return null;
         }
@@ -36,71 +60,55 @@ function MintRecipe() {
 
     const switchToPolygonAmoy = async () => {
         if (!window.ethereum) {
-            alert('MetaMask is required to switch networks.');
+            alert('MetaMask is required.');
             return false;
         }
-
         try {
             const currentChainId = await window.ethereum.request({ method: 'eth_chainId' });
             if (currentChainId !== POLYGON_AMOY_CHAIN_ID) {
-                setStatus('Switching to Polygon Amoy testnet...');
                 await window.ethereum.request({
                     method: 'wallet_switchEthereumChain',
                     params: [{ chainId: POLYGON_AMOY_CHAIN_ID }]
                 });
-                setStatus('Switched to Polygon Amoy.');
             }
             return true;
-        } catch (error) {
-            console.error('Error switching network:', error);
-            alert('Please switch to Polygon Amoy manually in MetaMask.');
+        } catch {
+            alert('Switch to Polygon Amoy manually in MetaMask.');
             return false;
         }
     };
 
     const mintNFT = async () => {
         if (!window.ethereum) {
-            alert('Please install MetaMask to mint NFTs.');
+            alert('Please install MetaMask.');
+            return;
+        }
+
+        setIsMinting(true);
+        setStatus('Checking network...');
+        if (!(await switchToPolygonAmoy())) {
+            setIsMinting(false);
+            return;
+        }
+
+        setStatus('Uploading files...');
+        const tokenURI = await uploadToPinata();
+        if (!tokenURI) {
+            setIsMinting(false);
             return;
         }
 
         try {
-            setIsMinting(true);
-            setStatus('Checking network...');
-            
-            const isCorrectNetwork = await switchToPolygonAmoy();
-            if (!isCorrectNetwork) {
-                setIsMinting(false);
-                return;
-            }
-
-            setStatus('Uploading file...');
-            const pinataResponse = await uploadToPinata();
-            if (!pinataResponse || !pinataResponse.IpfsHash) {
-                setIsMinting(false);
-                return;
-            }
-            const tokenURI = `ipfs://${pinataResponse.IpfsHash}`;
-
-            setStatus('Connecting to MetaMask...');
             const provider = new ethers.BrowserProvider(window.ethereum);
             const signer = await provider.getSigner();
-            
-            console.log('Minting NFT on Polygon Amoy...');
             const contract = new ethers.Contract(CONTRACT_ADDRESS, abi, signer);
+            setStatus('Minting NFT...');
             const tx = await contract.mintNFT(tokenURI, { value: MINT_PRICE, gasLimit: 300000 });
-            
-            console.log('Transaction sent:', tx.hash);
-            setStatus(`Transaction sent: ${tx.hash}. Waiting for confirmation...`);
             await tx.wait();
-            
-            console.log('NFT Minted Successfully');
             alert('NFT Minted Successfully!');
             setStatus('NFT Minted Successfully!');
         } catch (error) {
-            console.error('Error minting NFT:', error);
             alert(`Error minting NFT: ${error.reason || error.message}`);
-            setStatus('Minting failed. Please try again.');
         } finally {
             setIsMinting(false);
         }
@@ -109,11 +117,24 @@ function MintRecipe() {
     return (
         <div>
             <h2>Mint Recipe NFT</h2>
+            <input type="text" placeholder="Recipe Title" value={title} onChange={handleChange(setTitle)} disabled={isMinting} />
+            <textarea placeholder="Description" value={description} onChange={handleChange(setDescription)} disabled={isMinting} />
+            
+            <h3>Ingredients</h3>
+            {ingredients.map((ingredient, index) => (
+                <input key={index} type="text" placeholder={`Ingredient ${index + 1}`} value={ingredient} onChange={handleArrayChange(index, setIngredients, ingredients)} disabled={isMinting} />
+            ))}
+            <button type="button" onClick={addField(setIngredients, ingredients)}>+</button>
+            
+            <h3>Steps</h3>
+            {steps.map((step, index) => (
+                <input key={index} type="text" placeholder={`Step ${index + 1}`} value={step} onChange={handleArrayChange(index, setSteps, steps)} disabled={isMinting} />
+            ))}
+            <button type="button" onClick={addField(setSteps, steps)}>+</button>
+            
             <label>Choose File</label>
             <input type="file" onChange={changeHandler} multiple disabled={isMinting} />
-            <button onClick={mintNFT} disabled={isMinting}>
-                {isMinting ? 'Minting...' : 'Mint NFT'}
-            </button>
+            <button onClick={mintNFT} disabled={isMinting}>{isMinting ? 'Minting...' : 'Mint NFT'}</button>
             {status && <p>{status}</p>}
         </div>
     );
