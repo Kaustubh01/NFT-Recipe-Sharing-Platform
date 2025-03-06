@@ -1,9 +1,9 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { fetchNFTS } from "../services/nftServices";
 
-const NFTContext = createContext();
+const OwnerNFTContext = createContext();
 
-export const NFTProvider = ({children})=>{
+export const OwnerNFTProvider = ({children})=>{
     const [nfts, setNfts] = useState([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
@@ -34,13 +34,13 @@ export const NFTProvider = ({children})=>{
     
 
     return (
-        <NFTContext.Provider value={{nfts, loading, error}}>
+        <OwnerNFTContext.Provider value={{nfts, loading, error}}>
             {children}
-        </NFTContext.Provider>
+        </OwnerNFTContext.Provider>
     )
     
 }
 
-export const useNFTs = () =>{
-    return useContext(NFTContext);
+export const useOwnerNFTs = () =>{
+    return useContext(OwnerNFTContext);
 }

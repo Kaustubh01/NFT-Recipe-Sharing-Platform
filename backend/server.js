@@ -15,7 +15,13 @@ app.use(express.json());
 //Routes
 app.use("/api", authRoutes);
 app.use("/api/store", storeRoutes)
-app.use("api/user", userRoutes)
+app.use("/api/user", userRoutes)
 
 const PORT = process.env.PORT || 5000;
+app._router.stack.forEach((route) => {
+    if (route.route) {
+        console.log(`✅ Registered Route: ${route.route.path} [${Object.keys(route.route.methods).join(",").toUpperCase()}]`);
+    }
+});
+
 app.listen(PORT, ()=>console.log(`Server Running on port ${PORT}`));

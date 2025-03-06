@@ -1,9 +1,8 @@
-import prisma from "../config/db";
-import dotenv from "dotenv"
+import prisma from "../config/db.js";
 
 
 
-export const getUser = async (req, res) => {
+const getUser = async (req, res) => {
     try {
         const {address} = req.body;
         if (!address) {
@@ -28,3 +27,5 @@ export const getUser = async (req, res) => {
         return res.status(500).json({message: "Internal server error"})
     }
 }
+
+export {getUser}
