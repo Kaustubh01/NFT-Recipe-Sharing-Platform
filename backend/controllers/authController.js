@@ -3,7 +3,7 @@ import {generateToken} from "../utils/jwtUtils.js";
 
 export const authenticateUser = async (req, res) => {
     try {
-        const { address } = req.body;
+        const { address, name } = req.body;
 
         if (!address) {
             return res.status(400).json({ message: "Address is required." });
@@ -18,8 +18,8 @@ export const authenticateUser = async (req, res) => {
             user = await prisma.user.create({
                 data: {
                     address,
-                    name: null,  // Optional field
-                    type: "CUSTOMER",  // Ensure this matches Prisma schema
+                    name: name,  // Optional field
+                    type: "CHEF",  // Ensure this matches Prisma schema
                 }
             });
             console.log("✅ New user created:", user);
@@ -34,6 +34,7 @@ export const authenticateUser = async (req, res) => {
             message: "Authentication successful",
             token,
             user: {
+                name: user.name,
                 address: user.address,
                 type: user.type,
             }

@@ -1,31 +1,30 @@
 import prisma from "../config/db";
-import generateToken from "../utils/jwtUtils";
-import {ethers} from "ethers"
 import dotenv from "dotenv"
 
-dotenv.config()
 
-const ALCHEMY_API_KEY = process.env.ALCHEMY_API_KEY;
-const CONTRACT_ADDRESS = process.env.CONTRACT_ADDRESS;
-const ALCHEMY_URL = `https://polygon-amoy.g.alchemy.com/v2/${ALCHEMY_API_KEY}`;
 
-const mintNFT = async (req, res) => {
+export const getUser = async (req, res) => {
     try {
-        const {address, tokenURI}= req.body;
-        if (!address || !tokenURI) {
-            return res.status(400).json({ message: "Address and URI of token are required." });
+        const {address} = req.body;
+        if (!address) {
+            return res.status(400).json({message: "Adress of the user is required"})
         }
-
-        console.log("\n🔹 Received Address:", address);
-        console.log("\n🔹 Received token uri:", tokenURI);
-
-        const provider = new ethers.JsonRpcProvider(ALCHEMY_URL)
-        const wallet = new ethers.Wallet(PR)
-
-
-
-
+    
+        const user = await prisma.user.findUnique({
+            where: {address},
+            select: {
+                name: true,
+                address: true,
+                type: true
+            }
+        })
+    
+        if (!user) {
+            return res.status(404).json({message: "User not found"})
+        }
+    
+        return res.json(user)
     } catch (error) {
-        
+        return res.status(500).json({message: "Internal server error"})
     }
 }

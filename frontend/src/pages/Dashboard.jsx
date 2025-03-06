@@ -1,5 +1,4 @@
 import React from 'react'
-import { NFTProvider } from '../contexts/NFTContext'
 import NFTList from '../components/NFTList'
 
 function Dashboard() {

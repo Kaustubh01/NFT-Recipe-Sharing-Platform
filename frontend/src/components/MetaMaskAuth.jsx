@@ -1,47 +1,25 @@
 import React, { useState } from "react";
-import { ethers } from "ethers";
+import { authenticateWithMetaMask } from "../services/metamaskServices";
 
 const MetaMaskAuth = ({ onAuthSuccess }) => {
+    const [name, setName] = useState("");
     const [address, setAddress] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
-    const authenticateWithMetaMask = async () => {
+    const handleAuth = async () => {
+        if (!name.trim()) {
+            setError("Please enter your name.");
+            return;
+        }
+
         setLoading(true);
         setError("");
 
         try {
-            if (!window.ethereum) {
-                throw new Error("MetaMask is not installed!");
-            }
-
-            // Request account access
-            const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
-            if (!accounts || accounts.length === 0) {
-                throw new Error("No Ethereum account found.");
-            }
-
-            const provider = new ethers.BrowserProvider(window.ethereum);
-            const signer = await provider.getSigner();
-            const userAddress = await signer.getAddress();
-
-            // Send address to backend (No signature required)
-            const response = await fetch("http://localhost:5000/api/auth", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ address: userAddress }),
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.message || "Authentication failed.");
-            }
-
-            // Store JWT token in localStorage
-            localStorage.setItem("token", data.token);
+            const userAddress = await authenticateWithMetaMask(name);
             setAddress(userAddress);
-            onAuthSuccess(userAddress); // Callback to notify parent component
+            onAuthSuccess(userAddress);
         } catch (err) {
             setError(err.message);
         } finally {
@@ -55,8 +33,15 @@ const MetaMaskAuth = ({ onAuthSuccess }) => {
                 <p className="text-green-600 font-bold">Connected: {address}</p>
             ) : (
                 <>
+                    <input
+                        type="text"
+                        placeholder="Enter your name"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        className="border border-gray-300 p-2 rounded-md mb-3"
+                    />
                     <button
-                        onClick={authenticateWithMetaMask}
+                        onClick={handleAuth}
                         className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:bg-gray-400"
                         disabled={loading}
                     >
