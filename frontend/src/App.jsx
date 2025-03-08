@@ -8,6 +8,7 @@ import MetaMaskAuth from "./components/MetaMaskAuth";
 import { ProtectedRoutes } from "./routes/ProtectedRoutes";
 import UserProfile from "./pages/UserProfile";
 import { UserProvider } from "./contexts/UserContext";
+import Recipe from "./pages/Recipe";
 
 function App() {
     return (
@@ -22,6 +23,7 @@ function App() {
                             <Route path="/mint-recipe" element={<MintRecipe />} />
                             <Route path="/profile" element={<UserProfile />} />
                         </Route>
+                        <Route path="/recipe" element= {<Recipe/>} />
                     </Routes>
 
                 </UserProvider>

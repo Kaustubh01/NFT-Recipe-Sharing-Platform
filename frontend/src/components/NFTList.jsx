@@ -1,5 +1,6 @@
 import React from "react";
 import { useNFTs } from "../contexts/NFTContext";
+import { Link } from "react-router-dom";
 
 const NFTList = () => {
     const { nfts, loading, error } = useNFTs();
@@ -16,8 +17,10 @@ const NFTList = () => {
                 <ul>
                     {nfts.map((nft) => (
                         <li key={nft.id}>
+                            <Link to="/recipe" state={nft}>
                             <h3>{nft.metadata?.name || "Unnamed NFT"}</h3>
                             <p>{nft.metadata?.description || "No description available"}</p>
+                            </Link>
                         </li>
                     ))}
                 </ul>

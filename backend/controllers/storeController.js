@@ -7,24 +7,53 @@ const ALCHEMY_API_KEY = process.env.ALCHEMY_API_KEY;
 const CONTRACT_ADDRESS = process.env.CONTRACT_ADDRESS;
 const ALCHEMY_URL = `https://polygon-amoy.g.alchemy.com/v2/${ALCHEMY_API_KEY}`;
 
+
+const fetchNFTOwner = async (tokenId) => {
+    try {
+        const response = await axios.get(`${ALCHEMY_URL}/getOwnersForNFT`, {
+            params: {
+                contractAddress: CONTRACT_ADDRESS,
+                tokenId,
+            },
+        });
+
+        // Extract owner address (owners array is usually returned)
+        return response.data.owners?.[0] || "Unknown Owner";
+    } catch (error) {
+        console.error(`Error fetching owner for token ${tokenId}:`, error);
+        return "Unknown Owner"; // Fallback in case of error
+    }
+};
+
+/**
+ * Fetches NFTs from a collection along with their owner addresses.
+ */
 const fetchNFT = async (req, res) => {
     try {
         const response = await axios.get(`${ALCHEMY_URL}/getNFTsForCollection`, {
             params: {
                 contractAddress: CONTRACT_ADDRESS,
-                withMetadata: true
-            }
+                withMetadata: true,
+            },
         });
 
-        const nfts = response.data.nfts.map(nft => ({
-            id: nft.id?.tokenId, // ✅ Ensure each NFT has a unique ID
-            metadata: nft.metadata,
-            dateMinted: new Date(nft.timeLastUpdated).toLocaleDateString("en-GB", {
-                day: "2-digit",
-                month: "short",
-                year: "numeric"
+        const nfts = await Promise.all(
+            response.data.nfts.map(async (nft) => {
+                const tokenId = nft.id?.tokenId;
+                const owner = await fetchNFTOwner(tokenId); // Fetch owner for each NFT
+
+                return {
+                    id: tokenId,
+                    metadata: nft.metadata,
+                    owner, // ✅ Now correctly fetching the owner
+                    dateMinted: new Date(nft.timeLastUpdated).toLocaleDateString("en-GB", {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                    }),
+                };
             })
-        }));
+        );
 
         return res.json({ success: true, nfts });
     } catch (error) {
@@ -32,6 +61,7 @@ const fetchNFT = async (req, res) => {
         return res.status(500).json({ success: false, message: "Failed to fetch NFTs" });
     }
 };
+
 
 const fetchNFTsOfAUser = async (req, res) => {
     const { address } = req.body;
@@ -52,6 +82,7 @@ const fetchNFTsOfAUser = async (req, res) => {
         const nfts = response.data.ownedNfts.map(nft => ({
             id: nft.id?.tokenId,
             metadata: nft.metadata,
+            owner: address, // ✅ Owner is the user querying
             dateMinted: nft.timeLastUpdated
                 ? new Date(nft.timeLastUpdated).toLocaleDateString("en-GB", {
                       day: "2-digit",
@@ -68,6 +99,6 @@ const fetchNFTsOfAUser = async (req, res) => {
     }
 };
 
-export { fetchNFT ,fetchNFTsOfAUser };
+  
 
-
+export { fetchNFT, fetchNFTsOfAUser };

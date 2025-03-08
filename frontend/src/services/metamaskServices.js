@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
 
-export const authenticateWithMetaMask = async (name) => {
+const authenticateWithMetaMask = async (name) => {
     if (!window.ethereum) {
         throw new Error("MetaMask is not installed!");
     }
@@ -32,3 +32,10 @@ export const authenticateWithMetaMask = async (name) => {
     return userAddress;
 };
 
+
+const logout = () => {
+    localStorage.removeItem("token"); // Remove authentication token
+    window.location.reload(); // Refresh page to reset state
+};
+
+export {authenticateWithMetaMask, logout}
