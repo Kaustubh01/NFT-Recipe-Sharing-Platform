@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
 
-const authenticateWithMetaMask = async (name) => {
+const authenticateWithMetaMask = async (name = null) => {  // Default name to null
     if (!window.ethereum) {
         throw new Error("MetaMask is not installed!");
     }
@@ -14,10 +14,15 @@ const authenticateWithMetaMask = async (name) => {
     const signer = await provider.getSigner();
     const userAddress = await signer.getAddress();
 
+    const requestBody = { address: userAddress };
+    if (name) { // Only include name if it is provided
+        requestBody.name = name;
+    }
+
     const response = await fetch("http://localhost:5000/api/auth", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ address: userAddress, name }), // Send name along with address
+        body: JSON.stringify(requestBody),
     });
 
     const data = await response.json();
@@ -31,6 +36,7 @@ const authenticateWithMetaMask = async (name) => {
 
     return userAddress;
 };
+
 
 
 const logout = () => {
