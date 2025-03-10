@@ -1,6 +1,6 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
-import Dashboard from "./pages/Dashboard";
+import Store from "./pages/Store";
 import MintRecipe from "./components/MintRecipe";
 import { NFTProvider } from "./contexts/NFTContext";
 import Navbar from "./components/Navbar";
@@ -9,6 +9,7 @@ import { ProtectedRoutes } from "./routes/ProtectedRoutes";
 import UserProfile from "./pages/UserProfile";
 import { UserProvider } from "./contexts/UserContext";
 import Recipe from "./pages/Recipe";
+import Landing from "./pages/Landing";
 
 function App() {
     return (
@@ -17,7 +18,8 @@ function App() {
             <NFTProvider>
                 <UserProvider>
                     <Routes>
-                        <Route path="/" element={<Dashboard />} />
+                        <Route path="/" element= {<Landing/>}/>
+                        <Route path="/store" element={<Store />} />
                         <Route path="/register" element={<MetaMaskAuth />} />
                         <Route element={<ProtectedRoutes />}>
                             <Route path="/mint-recipe" element={<MintRecipe />} />
