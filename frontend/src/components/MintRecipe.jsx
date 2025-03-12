@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import { ethers } from 'ethers';
 import abi from '../abi.json';
 import { pinata } from '../utils/config';
+import "../styles/components/mintRecipe.css"
 
 function MintRecipe() {
     const CONTRACT_ADDRESS = '0xeDF89bD8674026E5b696C1E1843C262b16DAaCA0';
     const POLYGON_AMOY_CHAIN_ID = '0x13882';
     const MINT_PRICE = ethers.parseEther("0.001");
-    
+
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [ingredients, setIngredients] = useState(['']);
@@ -17,15 +18,15 @@ function MintRecipe() {
     const [status, setStatus] = useState('');
 
     const handleChange = setter => event => setter(event.target.value);
-    
+
     const handleArrayChange = (index, setter, array) => event => {
         const newArray = [...array];
         newArray[index] = event.target.value;
         setter(newArray);
     };
-    
+
     const addField = (setter, array) => () => setter([...array, '']);
-    
+
     const changeHandler = event => setSelectedFiles(event.target.files);
 
     const uploadToPinata = async () => {
@@ -48,7 +49,7 @@ function MintRecipe() {
                     { trait_type: "Steps", value: steps.join(" | ") }
                 ]
             };
-            
+
             setStatus('Uploading metadata to Pinata...');
             const metadataResponse = await pinata.upload.json(metadata);
             return metadataResponse?.IpfsHash ? `ipfs://${metadataResponse.IpfsHash}` : null;
@@ -115,27 +116,35 @@ function MintRecipe() {
     };
 
     return (
-        <div>
-            <h2>Mint Recipe NFT</h2>
-            <input type="text" placeholder="Recipe Title" value={title} onChange={handleChange(setTitle)} disabled={isMinting} />
-            <textarea placeholder="Description" value={description} onChange={handleChange(setDescription)} disabled={isMinting} />
-            
-            <h3>Ingredients</h3>
-            {ingredients.map((ingredient, index) => (
-                <input key={index} type="text" placeholder={`Ingredient ${index + 1}`} value={ingredient} onChange={handleArrayChange(index, setIngredients, ingredients)} disabled={isMinting} />
-            ))}
-            <button type="button" onClick={addField(setIngredients, ingredients)}>+</button>
-            
-            <h3>Steps</h3>
-            {steps.map((step, index) => (
-                <input key={index} type="text" placeholder={`Step ${index + 1}`} value={step} onChange={handleArrayChange(index, setSteps, steps)} disabled={isMinting} />
-            ))}
-            <button type="button" onClick={addField(setSteps, steps)}>+</button>
-            
-            <label>Choose File</label>
-            <input type="file" onChange={changeHandler} multiple disabled={isMinting} />
-            <button onClick={mintNFT} disabled={isMinting}>{isMinting ? 'Minting...' : 'Mint NFT'}</button>
-            {status && <p>{status}</p>}
+        <div className="mintrecipepage">
+            <div className='form'>
+
+                <h2>Mint Recipe NFT</h2>
+                <input type="text" placeholder="Recipe Title" value={title} onChange={handleChange(setTitle)} disabled={isMinting} />
+                <textarea placeholder="Description" value={description} onChange={handleChange(setDescription)} disabled={isMinting} />
+
+                <h3>Ingredients</h3>
+                <div className="ingredients">
+                
+                {ingredients.map((ingredient, index) => (
+                    <input key={index} type="text" placeholder={`Ingredient ${index + 1}`} value={ingredient} onChange={handleArrayChange(index, setIngredients, ingredients)} disabled={isMinting} />
+                ))}
+                <button type="button" onClick={addField(setIngredients, ingredients)} className='add'>+</button>
+                </div>
+
+                <h3>Steps</h3>
+                <div className="steps">
+                {steps.map((step, index) => (
+                    <input key={index} type="text" placeholder={`Step ${index + 1}`} value={step} onChange={handleArrayChange(index, setSteps, steps)} disabled={isMinting} />
+                ))}
+                <button type="button" onClick={addField(setSteps, steps)} className='add'>+</button>
+                </div>
+
+
+                <input type="file" onChange={changeHandler} multiple disabled={isMinting} />
+                <button onClick={mintNFT} className='mint' disabled={isMinting}>{isMinting ? 'Minting...' : 'Mint NFT'}</button>
+                {status && <p>{status}</p>}
+            </div>
         </div>
     );
 }

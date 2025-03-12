@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { authenticateWithMetaMask } from "../services/metamaskServices";
+import '../styles/components/metamaskAuth.css'
 
 const MetaMaskAuth = ({ onAuthSuccess }) => {
     const [name, setName] = useState("");
@@ -28,28 +29,30 @@ const MetaMaskAuth = ({ onAuthSuccess }) => {
     };
 
     return (
-        <div className="flex flex-col items-center justify-center p-6 bg-gray-100 rounded-xl shadow-md">
-            {address ? (
-                <p className="text-green-600 font-bold">Connected: {address}</p>
-            ) : (
-                <>
-                    <input
-                        type="text"
-                        placeholder="Enter your name"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        className="border border-gray-300 p-2 rounded-md mb-3"
-                    />
-                    <button
-                        onClick={handleAuth}
-                        className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:bg-gray-400"
-                        disabled={loading}
-                    >
-                        {loading ? "Connecting..." : "Sign in with MetaMask"}
-                    </button>
-                    {error && <p className="text-red-600 mt-2">{error}</p>}
-                </>
-            )}
+        <div className="page">
+            <div className="signup">
+                {address ? (
+                    <p className="text-green-600 font-bold">Connected: {address}</p>
+                ) : (
+                    <>
+                        <input
+                            type="text"
+                            placeholder="Enter your name"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            className="name"
+                        />
+                        <button
+                            onClick={handleAuth}
+                            className="button"
+                            disabled={loading}
+                        >
+                            {loading ? "Connecting..." : "Sign in with MetaMask"}
+                        </button>
+                        {error && <p className="error">{error}</p>}
+                    </>
+                )}
+            </div>
         </div>
     );
 };

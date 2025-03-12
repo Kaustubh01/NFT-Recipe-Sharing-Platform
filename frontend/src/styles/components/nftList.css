@@ -1,0 +1,42 @@
+.list ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10;
+    list-style: none;
+}
+
+
+
+.list ul li .card {
+    background-color: lightskyblue;
+    width: 300px;
+    height: 400px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 20px;
+    margin: 20px
+}
+
+.list ul li .card img {
+    width: inherit;
+    height: 200px;
+}
+
+.list ul li .card h3,
+.list ul li .card p {
+    text-align: center;
+    white-space: nowrap;
+    /* Prevent text from wrapping */
+    overflow: hidden;
+    /* Hide overflowing text */
+    text-overflow: ellipsis;
+    /* Show "..." when text overflows */
+    max-width: 200px;
+    color: #29252C;
+}
+
+a {
+
+    text-decoration: none;
+}
