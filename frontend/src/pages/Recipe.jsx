@@ -64,8 +64,7 @@ const Recipe = () => {
     };
 
     const imageUrl = useMemo(() => {
-        console.log("Metadata:", metadata);
-        console.log("Image URL from metadata:", metadata.image);
+        console.log("metadata.image", metadata.image);
         return metadata?.image ? ipfsToHTTPS(metadata.image) : '';
     }, [metadata]);
 
