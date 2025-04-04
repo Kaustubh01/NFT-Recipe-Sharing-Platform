@@ -7,7 +7,7 @@ const Home = () => {
     const navigate = useNavigate()
     useEffect(() => {
         if (userAddress) {
-            navigate("/dashboard"); // Redirect to the Dashboard or another page
+            navigate("/dashboard"); 
         }
     }, [userAddress, navigate]);
 

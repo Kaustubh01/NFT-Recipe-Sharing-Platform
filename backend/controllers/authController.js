@@ -11,15 +11,14 @@ export const authenticateUser = async (req, res) => {
 
         console.log("\n🔹 Received Address:", address);
 
-        // Find user or create a new one
         let user = await prisma.user.findUnique({ where: { address } });
 
         if (!user) {
             user = await prisma.user.create({
                 data: {
                     address,
-                    name: name,  // Optional field
-                    type: "CHEF",  // Ensure this matches Prisma schema
+                    name: name,  
+                    type: "CHEF",
                 }
             });
             console.log("✅ New user created:", user);
@@ -27,7 +26,6 @@ export const authenticateUser = async (req, res) => {
             console.log("✅ User already exists:", user);
         }
 
-        // Generate JWT token
         const token = generateToken(user.address);
 
         return res.json({

@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
 
-const authenticateWithMetaMask = async (name = null) => {  // Default name to null
+const authenticateWithMetaMask = async (name = null) => {  
     if (!window.ethereum) {
         throw new Error("MetaMask is not installed!");
     }
@@ -15,7 +15,7 @@ const authenticateWithMetaMask = async (name = null) => {  // Default name to nu
     const userAddress = await signer.getAddress();
 
     const requestBody = { address: userAddress };
-    if (name) { // Only include name if it is provided
+    if (name) { 
         requestBody.name = name;
     }
 
@@ -31,7 +31,6 @@ const authenticateWithMetaMask = async (name = null) => {  // Default name to nu
         throw new Error(data.message || "Authentication failed.");
     }
 
-    // Store JWT token in localStorage
     localStorage.setItem("token", data.token);
 
     return userAddress;
@@ -40,8 +39,8 @@ const authenticateWithMetaMask = async (name = null) => {  // Default name to nu
 
 
 const logout = () => {
-    localStorage.removeItem("token"); // Remove authentication token
-    window.location.reload(); // Refresh page to reset state
+    localStorage.removeItem("token");
+    window.location.reload(); 
 };
 
 export {authenticateWithMetaMask, logout}

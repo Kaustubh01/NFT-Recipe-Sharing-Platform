@@ -7,9 +7,9 @@
     background-color: lightblue;
     padding: 20px;
     display: flex;
-    flex-direction: column; /* Stack items vertically */
-    justify-content: center; /* Align items at the top */
-    align-items: flex-start; /* Align items to the left */
+    flex-direction: column; 
+    justify-content: center;
+    align-items: flex-start; 
     text-align: left;
     flex: 1;
 }

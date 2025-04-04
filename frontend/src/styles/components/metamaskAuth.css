@@ -2,7 +2,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 90vh; /* Corrected unit */
+    height: 90vh; 
     width: 100%;
 }
 .page .signup {
@@ -10,9 +10,9 @@
     height: 600px;
     display: flex;
     flex-direction: column;
-    justify-content: center; /* Center horizontally */
-    align-items: start; /* Center vertically */
- /* Ensure it takes full width */
+    justify-content: center; 
+    align-items: start; 
+ 
     
 }
 

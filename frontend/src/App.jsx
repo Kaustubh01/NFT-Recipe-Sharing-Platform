@@ -13,7 +13,6 @@ import UserProfile from "./pages/UserProfile";
 import Recipe from "./pages/Recipe";
 import Landing from "./pages/Landing";
 
-// Page transition animation (ease-in)
 const pageVariants = {
   initial: { opacity: 0 },
   animate: { opacity: 1, transition: { duration: 0.5, ease: "easeInOut" } },

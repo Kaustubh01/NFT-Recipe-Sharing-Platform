@@ -27,11 +27,8 @@
 .list ul li .card p {
     text-align: center;
     white-space: nowrap;
-    /* Prevent text from wrapping */
     overflow: hidden;
-    /* Hide overflowing text */
     text-overflow: ellipsis;
-    /* Show "..." when text overflows */
     max-width: 200px;
     color: #29252C;
 }

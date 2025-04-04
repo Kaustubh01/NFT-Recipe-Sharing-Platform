@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 import axios from "axios";
 
-dotenv.config(); // ✅ Load environment variables first
+dotenv.config(); 
 
 const ALCHEMY_API_KEY = process.env.ALCHEMY_API_KEY;
 const CONTRACT_ADDRESS = process.env.CONTRACT_ADDRESS;
@@ -17,11 +17,10 @@ const fetchNFTOwner = async (tokenId) => {
             },
         });
 
-        // Extract owner address (owners array is usually returned)
         return response.data.owners?.[0] || "Unknown Owner";
     } catch (error) {
         console.error(`Error fetching owner for token ${tokenId}:`, error);
-        return "Unknown Owner"; // Fallback in case of error
+        return "Unknown Owner"; 
     }
 };
 
@@ -40,12 +39,12 @@ const fetchNFT = async (req, res) => {
         const nfts = await Promise.all(
             response.data.nfts.map(async (nft) => {
                 const tokenId = nft.id?.tokenId;
-                const owner = await fetchNFTOwner(tokenId); // Fetch owner for each NFT
+                const owner = await fetchNFTOwner(tokenId); 
 
                 return {
                     id: tokenId,
                     metadata: nft.metadata,
-                    owner, // ✅ Now correctly fetching the owner
+                    owner, 
                     dateMinted: new Date(nft.timeLastUpdated).toLocaleDateString("en-GB", {
                         day: "2-digit",
                         month: "short",
@@ -73,8 +72,8 @@ const fetchNFTsOfAUser = async (req, res) => {
     try {
         const response = await axios.get(`${ALCHEMY_URL}/getNFTs`, {
             params: {
-                owner: address, // Fetch NFTs owned by this address
-                contractAddresses: [CONTRACT_ADDRESS], // Filter by contract
+                owner: address, 
+                contractAddresses: [CONTRACT_ADDRESS],
                 withMetadata: true,
             },
         });
@@ -82,7 +81,7 @@ const fetchNFTsOfAUser = async (req, res) => {
         const nfts = response.data.ownedNfts.map(nft => ({
             id: nft.id?.tokenId,
             metadata: nft.metadata,
-            owner: address, // ✅ Owner is the user querying
+            owner: address, 
             dateMinted: nft.timeLastUpdated
                 ? new Date(nft.timeLastUpdated).toLocaleDateString("en-GB", {
                       day: "2-digit",

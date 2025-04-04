@@ -25,7 +25,6 @@ const fetchNFTSofOwner = async ()=>{
 
         if (!address) throw new Error("Invalid token, address missing.");
 
-        // Send a POST request without Authorization header
         const response = await axios.post(`${API_BASE_URL}/store/nfts-of-owner`, { address });
 
 

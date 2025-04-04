@@ -12,19 +12,19 @@ export const OwnerNFTProvider = ({children})=>{
         const getNfts = async () => {
             try {
                 const data = await fetchNFTS();
-                console.log("Fetched NFTs:", data); // 🔍 Log API response
+                console.log("Fetched NFTs:", data); 
                 
                 if (Array.isArray(data)) {
                     setNfts(data);
                 } else if (data && Array.isArray(data.nfts)) {
-                    setNfts(data.nfts); // ✅ Fix: Extract the correct array
+                    setNfts(data.nfts); 
                 } else {
                     console.error("Unexpected API response:", data);
-                    setNfts([]); // Set empty array to avoid errors
+                    setNfts([]); 
                 }
             } catch (error) {
                 setError(error.message);
-                setNfts([]); // Set empty array to prevent crashes
+                setNfts([]); 
             } finally {
                 setLoading(false);
             }

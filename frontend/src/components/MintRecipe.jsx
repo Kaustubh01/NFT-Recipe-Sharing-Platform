@@ -40,10 +40,15 @@ function MintRecipe() {
             if (!uploadImage?.IpfsHash) return null;
             const imageUrl = `ipfs://${uploadImage.IpfsHash}`;
 
+            // Get the filename from the selected file
+            const filename = selectedFiles[0].name;
+            console.log("filename:", filename);
+
             const metadata = {
                 name: title,
                 description,
                 image: imageUrl,
+                filename: filename,
                 attributes: [
                     { trait_type: "Ingredients", value: ingredients.join(", ") },
                     { trait_type: "Steps", value: steps.join(" | ") }

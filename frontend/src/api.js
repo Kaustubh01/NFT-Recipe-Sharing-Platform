@@ -3,7 +3,7 @@ export const fetchProtectedData = async () => {
 
     if (!token) {
         console.warn("⚠️ No authentication token found.");
-        return null; // Return null instead of throwing an error
+        return null; 
     }
 
     try {
@@ -15,8 +15,8 @@ export const fetchProtectedData = async () => {
         if (!response.ok) {
             if (response.status === 401) {
                 console.error("❌ Authentication failed. Clearing token.");
-                localStorage.removeItem("token"); // Remove invalid token
-                return null; // Return null so the UI can handle re-authentication
+                localStorage.removeItem("token"); 
+                return null; 
             }
 
             const errorData = await response.json();
@@ -26,6 +26,6 @@ export const fetchProtectedData = async () => {
         return await response.json();
     } catch (error) {
         console.error("❌ Fetch error:", error.message);
-        return null; // Ensure function always returns something
+        return null; 
     }
 };
