@@ -5,7 +5,7 @@ import { pinata } from '../utils/config';
 import "../styles/components/mintRecipe.css"
 
 function MintRecipe() {
-    const CONTRACT_ADDRESS = '0xeDF89bD8674026E5b696C1E1843C262b16DAaCA0';
+    const CONTRACT_ADDRESS = '0xd9145CCE52D386f254917e481eB44e9943F39138';
     const POLYGON_AMOY_CHAIN_ID = '0x13882';
     const MINT_PRICE = ethers.parseEther("0.001");
 
