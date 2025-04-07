@@ -32,7 +32,7 @@ const authenticateWithMetaMask = async (name = null) => {
     }
     console.log("data: ", data);
     localStorage.setItem("user_token", data.token);
-    localStorage.setItem("usrename", data.user.name);
+    localStorage.setItem("username", data.user.name);
 
     return userAddress;
 };
