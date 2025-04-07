@@ -23,4 +23,5 @@ model User {
   type String @default("CUSTOMER")
   createdAt DateTime @default(now())
 
+  @@index([address]) // Add index for faster lookups
 }
