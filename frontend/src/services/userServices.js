@@ -5,7 +5,7 @@ const API_BASE_URL = "http://localhost:5000/api";
 
 const fetchUser = async () => {
     try {
-        const token = localStorage.getItem("token");
+        const token = localStorage.getItem("user_token");
 
         if (!token) throw new Error("No token found, please log in.");
         

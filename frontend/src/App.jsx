@@ -1,9 +1,10 @@
 import React from "react";
-import { Route, Routes, useLocation } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { NFTProvider } from "./contexts/NFTContext";
 import { UserProvider } from "./contexts/UserContext";
 import { ProtectedRoutes } from "./routes/ProtectedRoutes";
+import { Toaster } from 'react-hot-toast';
 
 import Navbar from "./components/Navbar";
 import MetaMaskAuth from "./components/MetaMaskAuth";
@@ -12,6 +13,7 @@ import MintRecipe from "./components/MintRecipe";
 import UserProfile from "./pages/UserProfile";
 import Recipe from "./pages/Recipe";
 import Landing from "./pages/Landing";
+import Footer from "./components/Footer";
 
 const pageVariants = {
   initial: { opacity: 0 },
@@ -24,12 +26,41 @@ function App() {
 
   return (
     <>
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          duration: 4000,
+          style: {
+            background: '#333',
+            color: '#fff',
+          },
+          success: {
+            style: {
+              background: '#10B981',
+            },
+          },
+          error: {
+            style: {
+              background: '#EF4444',
+            },
+          },
+        }}
+      />
       <Navbar />
       <NFTProvider>
         <UserProvider>
           <AnimatePresence mode="wait">
             <Routes location={location} key={location.pathname}>
-              <Route path="/" element={<Landing />} />
+              <Route path="/" element={
+                <motion.div 
+                  initial="initial"
+                  animate="animate"
+                  exit="exit"
+                  variants={pageVariants}
+                >
+                  <Landing />
+                </motion.div>
+              } />
               
               <Route path="/store" element={
                 <motion.div 
@@ -42,7 +73,16 @@ function App() {
                 </motion.div>
               } />
 
-              <Route path="/register" element={<MetaMaskAuth />} />
+              <Route path="/register" element={
+                <motion.div 
+                  initial="initial"
+                  animate="animate"
+                  exit="exit"
+                  variants={pageVariants}
+                >
+                  <MetaMaskAuth />
+                </motion.div>
+              } />
 
               <Route element={<ProtectedRoutes />}>
                 <Route path="/mint-recipe" element={
@@ -56,14 +96,33 @@ function App() {
                   </motion.div>
                 } />
                 
-                <Route path="/profile" element={<UserProfile />} />
-              </Route>
+                <Route path="/profile" element={
+                  <motion.div 
+                    initial="initial"
+                    animate="animate"
+                    exit="exit"
+                    variants={pageVariants}
+                  >
+                    <UserProfile />
+                  </motion.div>
+                } />
 
-              <Route path="/recipe" element={<Recipe />} />
+                <Route path="/recipe" element={
+                  <motion.div 
+                    initial="initial"
+                    animate="animate"
+                    exit="exit"
+                    variants={pageVariants}
+                  >
+                    <Recipe />
+                  </motion.div>
+                } />
+              </Route>
             </Routes>
           </AnimatePresence>
         </UserProvider>
       </NFTProvider>
+      <Footer />
     </>
   );
 }

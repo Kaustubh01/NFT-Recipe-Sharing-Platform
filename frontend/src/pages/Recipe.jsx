@@ -2,10 +2,10 @@ import { jwtDecode } from "jwt-decode";
 import React, { useMemo } from "react";
 import { useLocation } from "react-router-dom";
 import { ethers } from "ethers";
-import "../styles/pages/Recipe.css";
+import toast from 'react-hot-toast';
 
 const Recipe = () => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("user_token");
     let userAddress = "";
 
     // Decode token safely
@@ -70,12 +70,12 @@ const Recipe = () => {
 
     const tipChef = async () => {
         if (!window.ethereum) {
-            alert("Please install MetaMask to send tips.");
+            toast.error("Please install MetaMask to send tips.");
             return;
         }
 
         if (!ethers.isAddress(ownerAddress)) {
-            alert("Invalid recipient address.");
+            toast.error("Invalid recipient address.");
             return;
         }
 
@@ -99,10 +99,10 @@ const Recipe = () => {
             });
             
             await tx.wait();
-            alert("Tip sent successfully!");
+            toast.success("Tip sent successfully!");
         } catch (error) {
             console.error("Transaction failed:", error);
-            alert("Failed to send tip: " + (error.message || error));
+            toast.error("Failed to send tip: " + (error.message || error));
         }
     };
 
@@ -146,7 +146,12 @@ const Recipe = () => {
 
             {/* Show "Tip Chef" button only if the user is NOT the owner */}
             {(!token || userAddress !== ownerAddress) && (
-                <button onClick={tipChef}>Tip Chef</button>
+                <button 
+                    onClick={tipChef}
+                    className="flex items-center justify-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600 transition-colors"
+                >
+                    Tip Chef
+                </button>
             )}
         </div>
     );

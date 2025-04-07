@@ -1,5 +1,5 @@
 export const fetchProtectedData = async () => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("user_token");
 
     if (!token) {
         console.warn("⚠️ No authentication token found.");
@@ -15,7 +15,7 @@ export const fetchProtectedData = async () => {
         if (!response.ok) {
             if (response.status === 401) {
                 console.error("❌ Authentication failed. Clearing token.");
-                localStorage.removeItem("token"); 
+                localStorage.removeItem("user_token"); 
                 return null; 
             }
 

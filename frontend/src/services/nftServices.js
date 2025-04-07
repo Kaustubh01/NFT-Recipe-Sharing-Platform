@@ -16,7 +16,7 @@ const fetchNFTS = async () => {
 
 const fetchNFTSofOwner = async ()=>{
     try {
-        const token = localStorage.getItem("token")
+        const token = localStorage.getItem("user_token")
         if (!token) throw new Error("No token found, please log in.");
 
         const decoded = jwtDecode(token)

@@ -4,7 +4,7 @@ const authenticateWithMetaMask = async (name = null) => {
     if (!window.ethereum) {
         throw new Error("MetaMask is not installed!");
     }
-
+    console.log("1");
     const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
     if (!accounts || accounts.length === 0) {
         throw new Error("No Ethereum account found.");
@@ -30,8 +30,9 @@ const authenticateWithMetaMask = async (name = null) => {
     if (!response.ok) {
         throw new Error(data.message || "Authentication failed.");
     }
-
-    localStorage.setItem("token", data.token);
+    console.log("data: ", data);
+    localStorage.setItem("user_token", data.token);
+    localStorage.setItem("usrename", data.user.name);
 
     return userAddress;
 };
@@ -39,7 +40,8 @@ const authenticateWithMetaMask = async (name = null) => {
 
 
 const logout = () => {
-    localStorage.removeItem("token");
+    localStorage.removeItem("user_token");
+    localStorage.removeItem("username");
     window.location.reload(); 
 };
 
