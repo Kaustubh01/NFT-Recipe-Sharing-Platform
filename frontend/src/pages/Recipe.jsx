@@ -3,6 +3,8 @@ import React, { useMemo } from "react";
 import { useLocation } from "react-router-dom";
 import { ethers } from "ethers";
 import toast from 'react-hot-toast';
+import { ChefHat, Clock, List, ListOrdered, Send, ArrowLeft } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Recipe = () => {
     const token = localStorage.getItem("user_token");
@@ -19,7 +21,11 @@ const Recipe = () => {
     const recipe = location.state;
     
     if (!recipe?.metadata) {
-        return <p>No recipe data found.</p>;
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <p className="text-gray-600">No recipe data found.</p>
+            </div>
+        );
     }
 
     const { metadata, owner } = recipe;
@@ -30,15 +36,31 @@ const Recipe = () => {
     const ingredients = useMemo(() => {
         const ingredientsAttr = metadata?.attributes?.find(attr => attr.trait_type === "Ingredients");
         return ingredientsAttr?.value
-            ? ingredientsAttr.value.split("|").map((item, index) => <li key={index}>{item.trim()}</li>)
-            : <li>No ingredients listed.</li>;
+            ? ingredientsAttr.value.split("|").map((item, index) => (
+                <li key={index} className="flex items-start gap-2 py-1">
+                    <span className="text-orange-500 mt-1">•</span>
+                    <span className="text-gray-700">{item.trim()}</span>
+                </li>
+            ))
+            : <li className="text-gray-500">No ingredients listed.</li>;
     }, [metadata]);
 
     const steps = useMemo(() => {
         const stepsAttr = metadata?.attributes?.find(attr => attr.trait_type === "Steps");
         return stepsAttr?.value
-            ? stepsAttr.value.split("|").map((item, index) => <li key={index}>{item.trim()}</li>)
-            : <li>No steps listed.</li>;
+            ? stepsAttr.value
+                .split("|")
+                .map(item => item.trim())
+                .filter(item => item.length > 0 && item !== " ")
+                .map((item, index) => (
+                    <li key={index} className="flex items-start gap-3 py-2">
+                        <span className="flex-shrink-0 w-6 h-6 flex items-center justify-center bg-orange-100 text-orange-600 rounded-full text-sm font-medium">
+                            {index + 1}
+                        </span>
+                        <span className="text-gray-700">{item}</span>
+                    </li>
+                ))
+            : <li className="text-gray-500">No steps listed.</li>;
     }, [metadata]);
 
     const ipfsToHTTPS = (ipfsUrl) => {
@@ -107,14 +129,21 @@ const Recipe = () => {
     };
 
     return (
-        <div>
-            <h2>{metadata.name}</h2>
-            {imageUrl && (
-                <div className="recipe-image-container">
+        <div className="max-w-4xl mx-auto px-4 py-8">
+            <Link 
+                to="/store" 
+                className="inline-flex items-center gap-2 text-orange-500 hover:text-orange-600 mb-6 transition-colors"
+            >
+                <ArrowLeft className="w-4 h-4" />
+                Back to Recipes
+            </Link>
+
+            <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+                <div className="relative h-[400px] overflow-hidden">
                     <img 
                         src={imageUrl} 
                         alt={metadata.name}
-                        className="recipe-image"
+                        className="w-full h-full object-cover"
                         onError={(e) => {
                             // Fallback to Pinata gateway if IPFS.io fails
                             const pinataUrl = `https://gateway.pinata.cloud/ipfs/${metadata.image.replace('ipfs://', '')}`;
@@ -135,24 +164,54 @@ const Recipe = () => {
                         }}
                     />
                 </div>
-            )}
-            <p>{metadata.description}</p>
-            
-            <h3>Ingredients</h3>
-            <ul>{ingredients}</ul>
-            
-            <h3>Steps</h3>
-            <ol>{steps}</ol>
 
-            {/* Show "Tip Chef" button only if the user is NOT the owner */}
-            {(!token || userAddress !== ownerAddress) && (
-                <button 
-                    onClick={tipChef}
-                    className="flex items-center justify-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600 transition-colors"
-                >
-                    Tip Chef
-                </button>
-            )}
+                <div className="p-6">
+                    <div className="flex items-center justify-between mb-4">
+                        <h1 className="text-3xl font-bold text-gray-900 first-letter:uppercase">
+                            {metadata.name}
+                        </h1>
+                        <div className="flex items-center gap-2 text-gray-500">
+                            <Clock className="w-4 h-4" />
+                            <span className="text-sm">
+                                {new Date(recipe.dateMinted).toLocaleDateString()}
+                            </span>
+                        </div>
+                    </div>
+
+                    <p className="text-gray-600 mb-8">{metadata.description}</p>
+
+                    <div className="grid md:grid-cols-2 gap-8">
+                        <div>
+                            <div className="flex items-center gap-2 mb-4">
+                                <List className="w-5 h-5 text-orange-500" />
+                                <h2 className="text-xl font-semibold text-gray-900">Ingredients</h2>
+                            </div>
+                            <ul className="space-y-1">{ingredients}</ul>
+                        </div>
+
+                        <div>
+                            <div className="flex items-center gap-2 mb-4">
+                                <ListOrdered className="w-5 h-5 text-orange-500" />
+                                <h2 className="text-xl font-semibold text-gray-900">Steps</h2>
+                            </div>
+                            <ol className="space-y-2">{steps}</ol>
+                        </div>
+                    </div>
+
+                    {/* Show "Tip Chef" button only if the user is NOT the owner */}
+                    {(!token || userAddress !== ownerAddress) && (
+                        <div className="mt-8 pt-6 border-t border-orange-100">
+                            <button 
+                                onClick={tipChef}
+                                className="flex items-center justify-center gap-2 px-6 py-3 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors w-full sm:w-auto"
+                            >
+                                <Send className="w-4 h-4" />
+                                Tip Chef
+                            </button>
+                        </div>
+                    )}
+                </div>
+            </div>
         </div>
     );
 };
