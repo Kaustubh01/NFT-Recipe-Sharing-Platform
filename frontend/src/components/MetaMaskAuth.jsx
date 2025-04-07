@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { authenticateWithMetaMask } from "../services/metamaskServices";
 import { Wallet } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import toast from 'react-hot-toast';
 
 const MetaMaskAuth = ({ onAuthSuccess }) => {
     const [name, setName] = useState("");
@@ -20,17 +21,18 @@ const MetaMaskAuth = ({ onAuthSuccess }) => {
         setError("");
 
         try {
-            const userAddress = await authenticateWithMetaMask(name);
-            console.log("userAddress: ", userAddress);
-            setAddress(userAddress);
-            window.dispatchEvent(new Event("authStateChanged"));
-            onAuthSuccess(userAddress);
+            const authData = await authenticateWithMetaMask(name);
+            console.log("Authentication successful:", authData);
+            setAddress(authData.address);
+            toast.success("Successfully connected!");
+            onAuthSuccess(authData);
             navigate("/profile");
         } catch (err) {
+            console.error("Authentication error:", err);
             setError(err.message);
+            toast.error(err.message);
             localStorage.removeItem("user_token");
             localStorage.removeItem("username");
-            window.dispatchEvent(new Event("authStateChanged"));
         } finally {
             setLoading(false);
         }

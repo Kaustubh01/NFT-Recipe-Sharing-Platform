@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { NFTProvider } from "./contexts/NFTContext";
@@ -23,6 +23,12 @@ const pageVariants = {
 
 function App() {
   const location = useLocation();
+  const [authData, setAuthData] = useState(null);
+
+  const handleAuthSuccess = (data) => {
+    setAuthData(data);
+    window.dispatchEvent(new Event("authStateChanged"));
+  };
 
   return (
     <>
@@ -80,7 +86,7 @@ function App() {
                   exit="exit"
                   variants={pageVariants}
                 >
-                  <MetaMaskAuth />
+                  <MetaMaskAuth onAuthSuccess={handleAuthSuccess} />
                 </motion.div>
               } />
 
