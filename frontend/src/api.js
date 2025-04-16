@@ -7,7 +7,8 @@ export const fetchProtectedData = async () => {
     }
 
     try {
-        const response = await fetch("http://localhost:5000/api/protected", {
+        
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/protected`, {
             method: "GET",
             headers: { Authorization: `Bearer ${token}` },
         });
@@ -27,5 +28,20 @@ export const fetchProtectedData = async () => {
     } catch (error) {
         console.error("❌ Fetch error:", error.message);
         return null; 
+    }
+};
+
+const checkAuth = async () => {
+    try {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/protected`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('user_token')}`
+            }
+        });
+
+        // ... rest of the code ...
+    } catch (error) {
+        // ... error handling ...
     }
 };

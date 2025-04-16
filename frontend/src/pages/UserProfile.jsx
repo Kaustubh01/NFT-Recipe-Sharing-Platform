@@ -2,22 +2,31 @@ import React from 'react'
 import {useUser} from "../contexts/UserContext"
 import { OwnerNFTProvider } from '../contexts/OwnerNFTContext';
 import OwnerNFTList from '../components/OwnerNFTList';
-import { User, ChefHat, Wallet } from 'lucide-react';
+import { User, ChefHat, Wallet, Clock } from 'lucide-react';
 
 const UserProfile = () => {
   const {user, loading, error} = useUser();
   const username = localStorage.getItem("username");
 
   if (loading) return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-orange-500"></div>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="flex flex-col items-center gap-4">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-orange-500"></div>
+        <p className="text-gray-600">Loading your profile...</p>
+      </div>
     </div>
   );
   
   if (error) return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
-        <p className="text-red-600">Error: {error}</p>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="p-6 bg-red-50 border border-red-200 rounded-xl shadow-sm max-w-md w-full">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="p-2 bg-red-100 rounded-full">
+            <User className="h-5 w-5 text-red-500" />
+          </div>
+          <h2 className="text-xl font-semibold text-red-800">Error</h2>
+        </div>
+        <p className="text-red-600">{error}</p>
       </div>
     </div>
   );
