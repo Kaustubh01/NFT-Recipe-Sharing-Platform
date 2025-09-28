@@ -276,6 +276,3 @@ Key implementation notes:
 Polygon Amoy is the current Polygon PoS testnet (chain id `80002`) intended to replace the older Mumbai testnet — useful for staging and testing NFTs before mainnet. See Polygon docs for details. citeturn0search0turn0search6
 
 ---
-
-
-*README generated/updated by ChatGPT. If you want, I can also create a `.env.example`, add Prisma seed/seed data, or open a PR with this README updated directly in your repository — tell me which files to use for exact values.*
