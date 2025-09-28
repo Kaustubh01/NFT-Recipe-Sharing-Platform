@@ -273,6 +273,6 @@ Key implementation notes:
 
 ## Notes about Polygon Amoy testnet
 
-Polygon Amoy is the current Polygon PoS testnet (chain id `80002`) intended to replace the older Mumbai testnet — useful for staging and testing NFTs before mainnet. See Polygon docs for details. citeturn0search0turn0search6
+Polygon Amoy is the current Polygon PoS testnet (chain id `80002`) intended to replace the older Mumbai testnet — useful for staging and testing NFTs before mainnet. See Polygon docs for details.
 
 ---
